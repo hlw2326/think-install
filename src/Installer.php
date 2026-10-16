@@ -103,8 +103,10 @@ class Installer extends LibraryInstaller
 
         // 初始化，若文件存在不进行操作
         if (!empty($extra['plugin']['init'])) {
-            foreach ((array)$extra['plugin']['init'] as $source => $target) {
-                if (!is_file($target) && is_file($sfile = $installPath . DIRECTORY_SEPARATOR . $source)) {
+            foreach ((array)$extra['plugin']['init'] as $source => $targets) {
+                if (!is_file($sfile = $installPath . DIRECTORY_SEPARATOR . $source)) continue;
+                foreach ((array)$targets as $target) {
+                    if (!is_string($target) || $target === '' || is_file($target)) continue;
                     $this->io->write("\r  > Init Source <info>{$source} </info>to <info>{$target} </info>");
                     file_exists(dirname($target)) || mkdir(dirname($target), 0755, true);
                     $this->filesystem->copy($sfile, $target);
